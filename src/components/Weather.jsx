@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Weather.css'
 
 import search_icon from '../assets/search.png'
@@ -12,10 +12,12 @@ import wind_icon from '../assets/wind.png'
 
 const Weather = () => {
 
-  const inputRef = useRef()
-
+  const [city, setCity] = useState('')
   const [weatherdata, setWeatherData] = useState(null)
-  const [isCelsius, setIsCelsius] = useState(true) // 🔹 added
+  const [isCelsius, setIsCelsius] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [recentCities, setRecentCities] = useState([])
 
   const allIcons = {
     '01d': clear_icon,
@@ -34,36 +36,46 @@ const Weather = () => {
     '13n': snow_icon,
   }
 
-  const search = async (city) => {
-    if (city === '') {
-      alert('Enter City Name')
+  const search = async (searchCity) => {
+    if (!searchCity.trim()) {
+      setError('Please enter a city name')
       return
     }
 
-    try {
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${import.meta.env.VITE_APP_ID}`
+    setLoading(true)
+    setError('')
 
+    try {
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${searchCity}&units=metric&appid=${import.meta.env.VITE_APP_ID}`
       const response = await fetch(url)
       const data = await response.json()
 
       if (!response.ok) {
-        alert(data.message)
+        setError(data.message || 'City not found')
+        setLoading(false)
         return
       }
 
       const icon = allIcons[data.weather[0].icon] || clear_icon
 
       setWeatherData({
+        city: data.name,
+        temperature: Math.floor(data.main.temp),
+        condition: data.weather[0].main,
         humidity: data.main.humidity,
         windSpeed: Math.round(data.wind.speed * 3.6),
-        tempreature: Math.floor(data.main.temp),
-        location: data.name,
-        icon: icon
+        icon
       })
 
-    } catch (error) {
-      console.error('Error in fetching weather data')
-      setWeatherData(null)
+
+      setRecentCities(prev =>
+        [data.name, ...prev.filter(c => c !== data.name)].slice(0, 5)
+      )
+
+    } catch {
+      setError('Failed to fetch weather data')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -73,51 +85,72 @@ const Weather = () => {
 
   const displayTemp = () => {
     if (!weatherdata) return ''
+    const c = weatherdata.temperature
     return isCelsius
-      ? `${weatherdata.tempreature}°C`
-      : `${Math.round((weatherdata.tempreature * 9) / 5 + 32)}°F`
+      ? `${c}°C`
+      : `${Math.round((c * 9) / 5 + 32)}°F`
   }
 
   return (
-    <div className='weather'>
+    <div className="weather">
+
       <div className="search-bar">
-        <input ref={inputRef} type="text" placeholder='Search city' />
-        <img src={search_icon} onClick={() => search(inputRef.current.value)} />
+        <input
+          type="text"
+          placeholder="Search city"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && search(city)}
+        />
+        <img src={search_icon} onClick={() => search(city)} />
       </div>
 
-      {weatherdata ? <>
-        <img src={weatherdata.icon} alt="" className='weather-icon' />
+      {loading && <p className="status">Loading...</p>}
+      {error && <p className="status error">{error}</p>}
 
-        <p className='temperature'>{displayTemp()}</p>
+      {weatherdata && !loading && (
+        <>
+          <img src={weatherdata.icon} className="weather-icon" />
+          <p className="temperature">{displayTemp()}</p>
 
-        {/* 🔹 added button only */}
-        <button
-          className="unit-toggle"
-          onClick={() => setIsCelsius(!isCelsius)}
-        >
-          {isCelsius ? 'Show °F' : 'Show °C'}
-        </button>
+          <button
+            className="unit-toggle"
+            onClick={() => setIsCelsius(!isCelsius)}
+          >
+            {isCelsius ? 'Show °F' : 'Show °C'}
+          </button>
 
-        <p className='location'>{weatherdata.location}</p>
+          <p className="location">{weatherdata.city}</p>
+          <p className="condition">{weatherdata.condition}</p>
 
-        <div className="weather-data">
-          <div className="col">
-            <img src={humidity_icon} alt="" />
-            <div>
-              <p>{weatherdata.humidity}%</p>
-              <span>Humidity</span>
+          <div className="weather-data">
+            <div className="col">
+              <img src={humidity_icon} />
+              <div>
+                <p>{weatherdata.humidity}%</p>
+                <span>Humidity</span>
+              </div>
+            </div>
+
+            <div className="col">
+              <img src={wind_icon} />
+              <div>
+                <p>{weatherdata.windSpeed} km/h</p>
+                <span>Wind</span>
+              </div>
             </div>
           </div>
 
-          <div className="col">
-            <img src={wind_icon} alt="" />
-            <div>
-              <p>{weatherdata.windSpeed} km/h</p>
-              <span>Wind speed</span>
+          {recentCities.length > 0 && (
+            <div className="recent">
+              <p>Recent searches:</p>
+              {recentCities.map(c => (
+                <span key={c} onClick={() => search(c)}>{c}</span>
+              ))}
             </div>
-          </div>
-        </div>
-      </> : null}
+          )}
+        </>
+      )}
 
     </div>
   )
