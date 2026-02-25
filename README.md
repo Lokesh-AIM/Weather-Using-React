@@ -1,16 +1,80 @@
-# React + Vite
+# 🌦️ Weather Using React
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern and responsive **Weather Checker application** built with **React** that allows users to quickly check the current weather for any city around the world.
 
-Currently, two official plugins are available:
+The app fetches real-time weather data using the **OpenWeather API** and provides a clean, user-friendly interface with proper loading and error handling.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🚀 Live Demo
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+🔗 **Live Site:**  
+https://lokesh-aim.github.io/Weather-Using-React/
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 📌 Features
+
+- 🔍 Search weather by city name  
+- 🌡️ Toggle temperature between **Celsius (°C)** and **Fahrenheit (°F)**  
+- ☁️ Display weather condition with icons  
+- 💧 Show humidity and wind speed  
+- ⏳ Loading state while fetching data  
+- ❌ Error message for invalid city names  
+- 🕘 Recent search history (clickable)  
+- 🎨 Modern glassmorphism UI  
+
+---
+
+## 🛠️ Tech Stack
+
+- **React** (Functional Components & Hooks)
+- **Vite** (Fast build tool)
+- **CSS3** (Custom styling)
+- **OpenWeather API**
+- **GitHub Pages** (Deployment)
+
+---
+
+
+---
+
+## ⚙️ How It Works
+
+1. User enters a city name  
+2. App fetches weather data from OpenWeather API  
+3. Displays:
+   - Temperature
+   - Weather condition
+   - Humidity
+   - Wind speed
+4. Users can toggle between °C and °F  
+5. Recent searches are stored in state for quick access  
+
+---
+
+
+---
+
+## 📚 Learning Outcomes
+
+- React Hooks (`useState`, `useEffect`)
+- Controlled inputs
+- API integration & error handling
+- Conditional rendering
+- UI/UX improvements
+- GitHub Pages deployment
+- Handling merge conflicts in Git
+
+---
+
+## 👤 Author
+
+**Lokesh**  
+GitHub: https://github.com/Lokesh-AIM
+
+---
+
+## ⭐ Feedback
+
+If you found this project useful, feel free to ⭐ the repository!
